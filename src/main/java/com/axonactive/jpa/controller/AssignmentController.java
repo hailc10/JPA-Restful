@@ -49,7 +49,5 @@ public class AssignmentController {
         return Response.ok(assignmentService.updateAssignment(assignmentId,assignmentRequest)).build();
     }
 
-
-
 }
 
