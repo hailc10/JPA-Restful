@@ -41,11 +41,7 @@ public class RelativeServiceImpl implements RelativeService {
     @Inject
     EmployeeMapper employeeMapper;
 
-    @Inject
-    DepartmentMapper departmentMapper;
 
-    @Inject
-    ProjectMapper projectMapper;
 
     @Override
     public List<RelativeDTO> getAllRelativeByEmployeeId(int employeeId) {
@@ -102,6 +98,8 @@ public class RelativeServiceImpl implements RelativeService {
                 .getSingleResult();
     }
 
+
+    // lấy danh sách relative theo Emp
     public List<EmployeeRelativeDTO> getRelativeOfEmployee(){
         return getAllRelatives().stream()
                 .collect(Collectors.groupingBy(Relative::getEmployee))
@@ -118,24 +116,7 @@ public class RelativeServiceImpl implements RelativeService {
         return em.createQuery("from Relative", Relative.class).getResultList();
     }
 
-    public List<DepartmentProjectDTO> getProjectOfDepartment(){
-        return getAllProjects().stream()
-                .collect(Collectors.groupingBy(Project::getDepartment))
-                .entrySet()
-                .stream()
-                .map(departmentProjectsEntry ->{
-                    DepartmentDTO departmentDTO = departmentMapper.DepartmentToDepartmentDTO(departmentProjectsEntry.getKey());
-                    List<ProjectDTO> projectDTOS = projectMapper.ProjectsToProjectDtos(departmentProjectsEntry.getValue());
-                    return new DepartmentProjectDTO(departmentDTO, projectDTOS);
-                }).collect(Collectors.toList());
-    }
-
-    private List<Project> getAllProjects(){
-        return em.createQuery("from Project", Project.class).getResultList();
-    }
-
-
-
+    //lấy relative của emp để liên lạc theo độ ưu tiên Father > Mother > Else
     //employeeDTO +  relative where -> FATHER -> MOTHER -> ANYBODY ELSE
     public Optional<Relative> getEmergencyRelative(List<Relative> relativeList){
         Optional<Relative> emergencyRelative = getRelative(relativeList, Relationship.FATHER);
@@ -154,6 +135,8 @@ public class RelativeServiceImpl implements RelativeService {
         ).findAny();
     }
 
+
+    //lấy danh sách Relative theo Employee
     public List<EmployeeRelativeDTO> getEmployeeEmergencyRelative(){
         return getAllRelatives().stream()
                 .collect(Collectors.groupingBy(Relative::getEmployee))

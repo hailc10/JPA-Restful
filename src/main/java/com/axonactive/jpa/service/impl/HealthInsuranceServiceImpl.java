@@ -56,7 +56,7 @@ public class HealthInsuranceServiceImpl implements HealthInsuranceService {
     public HealthInsuranceDTO addHealthInsurance(int employeeId, HealthInsuranceDTO healthInsuranceDTO) {
         HealthInsurance healthInsurance = healthInsuranceMapper.HealthInsuranceDTOToHealthInsurance(healthInsuranceDTO);
         healthInsurance.setEmployee(employeeService.getEmployeeByIdFromDataBase(employeeId));
-        em.persist(healthInsurance);
+        em.merge(healthInsurance);
         return healthInsuranceDTO;
     }
 

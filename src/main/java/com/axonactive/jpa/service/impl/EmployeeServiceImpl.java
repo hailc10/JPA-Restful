@@ -2,13 +2,14 @@ package com.axonactive.jpa.service.impl;
 
 import com.axonactive.jpa.controller.request.EmployeeOfDepartmentRequest;
 import com.axonactive.jpa.controller.request.EmployeeRequest;
+import com.axonactive.jpa.entities.Assignment;
 import com.axonactive.jpa.entities.Department;
 import com.axonactive.jpa.entities.Employee;
 import com.axonactive.jpa.enumerate.Gender;
+import com.axonactive.jpa.service.AssignmentService;
 import com.axonactive.jpa.service.DepartmentService;
 import com.axonactive.jpa.service.EmployeeService;
-import com.axonactive.jpa.service.dto.EmployeeDTO;
-import com.axonactive.jpa.service.dto.EmployeeGroupByDepartmentDTO;
+import com.axonactive.jpa.service.dto.*;
 import com.axonactive.jpa.service.mapper.EmployeeMapper;
 
 import javax.enterprise.context.RequestScoped;
@@ -40,6 +41,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Inject
     DepartmentService departmentService;
+
+    @Inject
+    AssignmentService assignmentService;
 
     @Override
     public List<EmployeeDTO> getAllEmployeeByDepartment(int departmentId) {
@@ -162,6 +166,38 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
         throw new WebApplicationException(Response.status(BAD_REQUEST).entity("Không có Employee với Id: "+employeeId).build());
     }
+
+
+    //lấy danh sách các emp chưa làm project nào
+    public List<EmployeeDTO> getEmpNotInProject(){
+        List<Assignment> assignments = em.createQuery("from Assignment",Assignment.class).getResultList();
+        List<Employee> employeeList = assignments
+                .stream()
+                .map(assigment -> assigment.getEmployee())
+                .distinct()
+                .collect(Collectors.toList());
+        return employeeMapper.EmployeesToEmployeeDtos(em.createQuery("FROM Employee", Employee.class).getResultList().stream().filter(employee->!employeeList.contains(employee)).collect(Collectors.toList()));
+    }
+
+    //lấy danh sách làm việc trong project của dept khác
+    public List<EmployeeDTO> getEmployeesWorkOnOtherDepartmentProject(){
+        List<Assignment> assignments = em.createQuery("from Assignment",Assignment.class).getResultList();
+        return employeeMapper.EmployeesToEmployeeDtos(assignments.stream()
+                .collect(Collectors.groupingBy(Assignment::getEmployee))
+                .entrySet()
+                .stream()
+                .filter(employeeListEntry ->
+                        employeeListEntry.getValue()
+                                .stream()
+                                .map(assignment -> assignment.getProject().getDepartment().getId())
+                                .distinct().count() > 1
+                )
+                .map(employeeListEntry -> employeeListEntry.getKey())
+                .collect(Collectors.toList()));
+
+    }
+
+
 
 
 }

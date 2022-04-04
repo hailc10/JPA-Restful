@@ -49,9 +49,26 @@ public class CompanyController {
     @GET
     @Path("projectofdepartment")
     public Response getProjectOfDepartment(){
-        return Response.ok(relativeService.getProjectOfDepartment()).build();
+        return Response.ok(projectService.getProjectOfDepartment()).build();
     }
 
+    @GET
+    @Path("employeeinproject")
+    public Response getEmployeeInProject(){
+        return Response.ok(projectService.getEmployeeInProject()).build();
+    }
+
+    @GET
+    @Path("empnotinproject")
+    public Response getEmpNotInProject(){
+        return Response.ok(employeeService.getEmpNotInProject()).build();
+    }
+
+    @GET
+    @Path("empinotherdepartmentproject")
+    public Response getEmployeesWorkOnOtherDepartmentProject(){
+        return Response.ok(employeeService.getEmployeesWorkOnOtherDepartmentProject()).build();
+    }
 
 
 }

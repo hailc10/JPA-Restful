@@ -6,7 +6,7 @@
 <!--        Your datasource-->
         <jta-data-source>java:/jpa</jta-data-source>
 
-
+<!--định nghĩa thuộc tính để map xuống database-->
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL55Dialect"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>

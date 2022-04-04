@@ -1,10 +1,13 @@
 package com.axonactive.jpa.service.impl;
 
 import com.axonactive.jpa.controller.request.ProjectRequest;
+import com.axonactive.jpa.entities.Assignment;
 import com.axonactive.jpa.entities.Project;
 import com.axonactive.jpa.service.DepartmentService;
 import com.axonactive.jpa.service.ProjectService;
-import com.axonactive.jpa.service.dto.ProjectDTO;
+import com.axonactive.jpa.service.dto.*;
+import com.axonactive.jpa.service.mapper.DepartmentMapper;
+import com.axonactive.jpa.service.mapper.EmployeeMapper;
 import com.axonactive.jpa.service.mapper.ProjectMapper;
 
 import javax.enterprise.context.RequestScoped;
@@ -15,6 +18,7 @@ import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @RequestScoped
@@ -26,6 +30,15 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Inject
     private DepartmentService departmentService;
+
+    @Inject
+    DepartmentMapper departmentMapper;
+
+    @Inject
+    ProjectMapper projectMapper;
+
+    @Inject
+    EmployeeMapper employeeMapper;
 
     private Project getProjectByIdDepartmentIdAndProjectIdHelper(int departmentId, int projectId){
         TypedQuery<Project> namedQuery = em.createNamedQuery(Project.GET_PROJECT_BY_ID, Project.class);
@@ -83,4 +96,49 @@ public class ProjectServiceImpl implements ProjectService {
 
         return ProjectMapper.INSTANCE.ProjectToProjectDto(project);
     }
+
+    //lấy danh sách các project theo department
+    public List<DepartmentProjectDTO> getProjectOfDepartment(){
+        return getAllProjects().stream()
+                .collect(Collectors.groupingBy(Project::getDepartment))
+                .entrySet()
+                .stream()
+                .map(departmentProjectsEntry ->{
+                    DepartmentDTO departmentDTO = departmentMapper.DepartmentToDepartmentDTO(departmentProjectsEntry.getKey());
+                    List<ProjectDTO> projectDTOS = projectMapper.ProjectsToProjectDtos(departmentProjectsEntry.getValue());
+                    return new DepartmentProjectDTO(departmentDTO, projectDTOS);
+                }).collect(Collectors.toList());
+    }
+
+    private List<Project> getAllProjects(){
+        return em.createQuery("from Project", Project.class).getResultList();
+    }
+
+
+    //lấy danh sách nhân viên làm việc trong project, tổng số lượng nhân viên, tổng số lượng tgian, tổng lương phải trả
+    public List<ProjectEmployeeDTO> getEmployeeInProject() {
+        List<Assignment> assignments = em.createQuery("from Assignment",Assignment.class).getResultList();
+        return assignments.stream()
+                .collect(Collectors.groupingBy(Assignment::getProject))
+                .entrySet()
+                .stream()
+                .filter(e->e.getKey().getArea().equals("Vietnam"))
+                .map((e)->{
+                    Project project = e.getKey();
+                    List<Assignment> assignmentList = e.getValue();
+                    List<EmployeeDTO> employeeDTOS = employeeMapper.EmployeesToEmployeeDtos(assignmentList
+                            .stream()
+                            .map(Assignment::getEmployee)
+                            .collect(Collectors.toList()));
+                    Double totalSalary = assignmentList.stream().reduce(0.0, (acc, curr) ->
+                                    acc + (curr.getEmployee().getSalary() / 160) * curr.getNumofhour()
+                            , Double::sum);
+                    int totalNumberOfHour = assignmentList.stream().mapToInt(Assignment::getNumofhour).sum();
+                    return new ProjectEmployeeDTO(project.getName(),project.getArea(),employeeDTOS,employeeDTOS.size(),totalNumberOfHour,totalSalary);
+                })
+                .collect(Collectors.toList());
+    }
+
+
+
 }
