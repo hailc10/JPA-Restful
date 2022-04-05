@@ -14,6 +14,4 @@ public class NoSuchDepartmentException extends WebApplicationException {
        return Response.status(Response.Status.BAD_REQUEST).entity("Không tồn tại Department này").build();
     }
 
-
-
 }

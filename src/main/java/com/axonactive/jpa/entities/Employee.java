@@ -27,7 +27,6 @@ import java.time.LocalDate;
 
 
 
-
 public class Employee {
     private static final String QUALIFIER = "com.axonactive.jpa.entities";
     public static final String GET_ALL_BY_DEPT_ID_AND_EMPLOYEE_ID = QUALIFIER + "getAllByDepartment";
@@ -49,6 +48,7 @@ public class Employee {
 
     @Column(name = "last_name", nullable = false, columnDefinition = "varchar(20)")
     private String lastName;
+
 
     @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
