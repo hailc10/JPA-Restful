@@ -173,11 +173,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Assignment> assignments = em.createQuery("from Assignment",Assignment.class).getResultList();
         List<Employee> employeeList = assignments
                 .stream()
-                .map(assigment -> assigment.getEmployee())
+                .map(assignment -> assignment.getEmployee())
                 .distinct()
                 .collect(Collectors.toList());
-        return employeeMapper.EmployeesToEmployeeDtos(em.createQuery("FROM Employee", Employee.class).getResultList().stream().filter(employee->!employeeList.contains(employee)).collect(Collectors.toList()));
+        return employeeMapper.EmployeesToEmployeeDtos(em.createQuery("from Employee",Employee.class).getResultList().stream().filter(employee -> !employeeList.contains(employee)).collect(Collectors.toList()));
     }
+
+//    public List<EmployeeDTO> getEmpNotInProject(){
+//
+//    }
 
     //lấy danh sách làm việc trong project của dept khác
     public List<EmployeeDTO> getEmployeesWorkOnOtherDepartmentProject(){
@@ -194,10 +198,6 @@ public class EmployeeServiceImpl implements EmployeeService {
                 )
                 .map(employeeListEntry -> employeeListEntry.getKey())
                 .collect(Collectors.toList()));
-
     }
-
-
-
 
 }

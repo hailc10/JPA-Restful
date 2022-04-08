@@ -68,6 +68,7 @@ public class ProjectServiceImpl implements ProjectService {
         return ProjectMapper.INSTANCE.ProjectsToProjectDtos(projectList);
     }
 
+
     @Override
     public ProjectDTO addProject(int departmentId, ProjectRequest projectRequest) {
         Project project = new Project();
@@ -99,25 +100,22 @@ public class ProjectServiceImpl implements ProjectService {
 
     //lấy danh sách các project theo department
     public List<DepartmentProjectDTO> getProjectOfDepartment(){
-        return getAllProjects().stream()
+        return em.createQuery("from Project", Project.class).getResultList()
+                .stream()
                 .collect(Collectors.groupingBy(Project::getDepartment))
                 .entrySet()
                 .stream()
-                .map(departmentProjectsEntry ->{
-                    DepartmentDTO departmentDTO = departmentMapper.DepartmentToDepartmentDTO(departmentProjectsEntry.getKey());
-                    List<ProjectDTO> projectDTOS = projectMapper.ProjectsToProjectDtos(departmentProjectsEntry.getValue());
-                    return new DepartmentProjectDTO(departmentDTO, projectDTOS);
+                .map(e->{
+                    DepartmentDTO departmentDTO = departmentMapper.DepartmentToDepartmentDTO(e.getKey());
+                    List<ProjectDTO> projectDTOS = projectMapper.ProjectsToProjectDtos(e.getValue());
+                    return new DepartmentProjectDTO(departmentDTO,projectDTOS);
                 }).collect(Collectors.toList());
-    }
-
-    private List<Project> getAllProjects(){
-        return em.createQuery("from Project", Project.class).getResultList();
     }
 
 
     //lấy danh sách nhân viên làm việc trong project, tổng số lượng nhân viên, tổng số lượng tgian, tổng lương phải trả
-    public List<ProjectEmployeeDTO> getEmployeeInProject() {
-        List<Assignment> assignments = em.createQuery("from Assignment",Assignment.class).getResultList();
+    public List<ProjectEmployeeDTO> getEmployeeInProject(){
+        List<Assignment> assignments = em.createQuery("from Assignment", Assignment.class).getResultList();
         return assignments.stream()
                 .collect(Collectors.groupingBy(Assignment::getProject))
                 .entrySet()
@@ -129,16 +127,15 @@ public class ProjectServiceImpl implements ProjectService {
                     List<EmployeeDTO> employeeDTOS = employeeMapper.EmployeesToEmployeeDtos(assignmentList
                             .stream()
                             .map(Assignment::getEmployee)
+                            .distinct()
                             .collect(Collectors.toList()));
-                    Double totalSalary = assignmentList.stream().reduce(0.0, (acc, curr) ->
-                                    acc + (curr.getEmployee().getSalary() / 160) * curr.getNumofhour()
-                            , Double::sum);
+                    Double totalSalary = assignmentList.stream().reduce(0.0, (acc, cur) ->
+                            acc + (cur.getEmployee().getSalary()/160) * cur.getNumofhour()
+                    ,Double::sum);
                     int totalNumberOfHour = assignmentList.stream().mapToInt(Assignment::getNumofhour).sum();
                     return new ProjectEmployeeDTO(project.getName(),project.getArea(),employeeDTOS,employeeDTOS.size(),totalNumberOfHour,totalSalary);
                 })
                 .collect(Collectors.toList());
     }
-
-
 
 }

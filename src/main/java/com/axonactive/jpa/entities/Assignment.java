@@ -21,6 +21,7 @@ public class Assignment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "num_of_hour")
     private Integer numofhour;
 
     @ManyToOne

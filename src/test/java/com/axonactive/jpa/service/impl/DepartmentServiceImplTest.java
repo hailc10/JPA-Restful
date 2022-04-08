@@ -44,8 +44,16 @@ class DepartmentServiceImplTest {
     @Mock
     private TypedQuery<Department> mockQuery;
 
+//    @Test
+//    void getAllDepartment_ShouldReturnRightListDepartment() {
+//        when(mockQuery.getResultList()).thenReturn(expectedDepartmentList);
+//        when(entityManager.createNamedQuery(Department.GET_ALL,Department.class)).thenReturn(mockQuery);
+//        List<Department> actualDepartmentList = departmentService.getAllDepartment();
+//        assertThat(expectedDepartmentList,containsInAnyOrder(actualDepartmentList.toArray()));
+//    }
+
     @Test
-    void getAllDepartment_ShouldReturnRightListDepartment() {
+    void getAllDepartment_ShouldReturnRightListDepartment(){
         when(mockQuery.getResultList()).thenReturn(expectedDepartmentList);
         when(entityManager.createNamedQuery(Department.GET_ALL,Department.class)).thenReturn(mockQuery);
         List<Department> actualDepartmentList = departmentService.getAllDepartment();

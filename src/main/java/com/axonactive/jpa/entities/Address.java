@@ -9,9 +9,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import io.swagger.annotations.Api;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import org.checkerframework.checker.units.qual.C;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.NotNull;
@@ -21,6 +20,9 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "address")
 @ToString
@@ -61,9 +63,11 @@ public class Address {
     private Employee employee;
 
     @CreationTimestamp
+    @Column(name = "created_date",nullable = false)
     private LocalDate createdDate;
 
     @UpdateTimestamp
+    @Column(name = "modified_date",nullable = false)
     private LocalDate modifiedDate;
 
 

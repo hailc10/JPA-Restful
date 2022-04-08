@@ -26,7 +26,6 @@ import java.time.LocalDate;
 @NamedQuery(name = Employee.GET_ALL, query = "from Employee")
 
 
-
 public class Employee {
     private static final String QUALIFIER = "com.axonactive.jpa.entities";
     public static final String GET_ALL_BY_DEPT_ID_AND_EMPLOYEE_ID = QUALIFIER + "getAllByDepartment";
@@ -50,6 +49,9 @@ public class Employee {
     private String lastName;
 
 
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
 
@@ -63,5 +65,13 @@ public class Employee {
     @ManyToOne
     @JoinColumn(name = "department_id", referencedColumnName = "id", nullable = false)
     private Department department;
+
+
+//    @Transient
+//    private String fullName;
+//
+//    public String getFullName() {
+//        return lastName + middleName + firstName;
+//    }
 
 }
