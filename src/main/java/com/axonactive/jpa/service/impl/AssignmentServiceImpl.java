@@ -22,7 +22,7 @@ import static com.axonactive.jpa.constant.Constant.EMPLOYEE_ID_PARAMETER_NAME_SQ
 
 @RequestScoped
 @Transactional
-public class AssignmentImpl implements AssignmentService {
+public class AssignmentServiceImpl implements AssignmentService {
 
     @PersistenceContext(unitName = "jpa")
     private EntityManager em;
