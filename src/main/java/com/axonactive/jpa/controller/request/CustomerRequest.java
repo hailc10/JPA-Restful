@@ -14,6 +14,7 @@ import javax.persistence.Transient;
 @Setter
 public class CustomerRequest {
     private String name;
+    @Transient
     private int age;
     @Embedded
     private ContactInfo contactInfo;

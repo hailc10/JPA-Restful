@@ -9,4 +9,6 @@ public interface CustomerService {
     List<Customer> getAllCustomer();
     Customer getCustomerById(int customerId);
     Customer addCustomer(CustomerRequest customerRequest);
+    void deleteCustomer(int customerId);
+    Customer updateCustomer(int customerId,CustomerRequest customerRequest);
 }

@@ -9,7 +9,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/customers")
-@Consumes(MediaType.APPLICATION_JSON)
+@Consumes({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
 @Produces(MediaType.APPLICATION_JSON)
 public class CustomerController {
     @Inject
@@ -30,6 +30,19 @@ public class CustomerController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addCustomer(CustomerRequest customerRequest){
         return Response.ok(customerService.addCustomer(customerRequest)).build();
+    }
+
+    @DELETE
+    @Path("/{id}")
+    public Response deleteCustomer(@PathParam("id") int customerId){
+        customerService.deleteCustomer(customerId);
+        return Response.ok().build();
+    }
+
+    @PUT
+    @Path("/{id}")
+    public Response updateCustomer(@PathParam("id") int customerId, CustomerRequest customerRequest){
+        return Response.ok(customerService.updateCustomer(customerId,customerRequest)).build();
     }
 
 }
