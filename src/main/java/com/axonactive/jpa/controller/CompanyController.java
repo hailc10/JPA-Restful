@@ -1,10 +1,7 @@
 package com.axonactive.jpa.controller;
 
 import com.axonactive.jpa.service.EmployeeService;
-import com.axonactive.jpa.service.impl.EmployeeServiceImpl;
-import com.axonactive.jpa.service.impl.HealthInsuranceServiceImpl;
-import com.axonactive.jpa.service.impl.ProjectServiceImpl;
-import com.axonactive.jpa.service.impl.RelativeServiceImpl;
+import com.axonactive.jpa.service.impl.*;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -26,6 +23,9 @@ public class CompanyController {
 
     @Inject
     HealthInsuranceServiceImpl healthInsuranceService;
+
+    @Inject
+    AddressServiceImpl addressService;
 
     @GET
     public Response getAllEmployeeGroupByDepartment(){
@@ -78,6 +78,12 @@ public class CompanyController {
     @Path("healthinsuranceofemployees")
     public Response getHealthInsuranceOfEmployee(){
         return Response.ok(healthInsuranceService.getHealthInsuranceOfEmployee()).build();
+    }
+
+    @GET
+    @Path("addressofemployees")
+    public Response getAddressOfEmployees(){
+        return Response.ok(addressService.getAddressOfEmployees()).build();
     }
 
 

@@ -5,7 +5,10 @@ import com.axonactive.jpa.enumerate.AddressType;
 import com.axonactive.jpa.service.AddressService;
 import com.axonactive.jpa.service.EmployeeService;
 import com.axonactive.jpa.service.dto.AddressDTO;
+import com.axonactive.jpa.service.dto.EmployeeAddressDTO;
+import com.axonactive.jpa.service.dto.EmployeeDTO;
 import com.axonactive.jpa.service.mapper.AddressMapper;
+import com.axonactive.jpa.service.mapper.EmployeeMapper;
 import io.swagger.annotations.Api;
 
 import javax.enterprise.context.RequestScoped;
@@ -33,6 +36,9 @@ public class AddressServiceImpl implements AddressService {
 
     @Inject
     AddressMapper addressMapper;
+
+    @Inject
+    EmployeeMapper employeeMapper;
 
     @Override
     public List<AddressDTO> getAllAddressByEmployeeId(int employeeId) {
@@ -95,5 +101,18 @@ public class AddressServiceImpl implements AddressService {
                 .collect(Collectors.toList());
     }
 
+    //lấy danh sách address theo emp
+    public List<EmployeeAddressDTO> getAddressOfEmployees(){
+        List<Address> addresses = em.createQuery("from Address", Address.class).getResultList();
+        return addresses.stream()
+                .collect(Collectors.groupingBy(Address::getEmployee))
+                .entrySet()
+                .stream()
+                .map(e->{
+                    EmployeeDTO employeeDTO = employeeMapper.EmployeeToEmployeeDto(e.getKey());
+                    List<AddressDTO> addressDTOS = addressMapper.AddressToAddressDtos(e.getValue());
+                    return new EmployeeAddressDTO(employeeDTO,addressDTOS);
+                }).collect(Collectors.toList());
+    }
 
 }
