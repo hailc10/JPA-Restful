@@ -183,7 +183,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 //
 //    }
 
-    //lấy danh sách làm việc trong project của dept khác
+    //lấy danh sách emp làm việc trong project của dept khác
     public List<EmployeeDTO> getEmployeesWorkOnOtherDepartmentProject(){
         List<Assignment> assignments = em.createQuery("from Assignment",Assignment.class).getResultList();
         return employeeMapper.EmployeesToEmployeeDtos(assignments.stream()
