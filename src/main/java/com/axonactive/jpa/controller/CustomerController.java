@@ -1,5 +1,6 @@
 package com.axonactive.jpa.controller;
 
+import com.axonactive.jpa.controller.request.CustomerRequest;
 import com.axonactive.jpa.service.CustomerService;
 
 import javax.inject.Inject;
@@ -25,9 +26,10 @@ public class CustomerController {
         return Response.ok(customerService.getCustomerById(customerId)).build();
     }
 
-//    @POST
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    public Response addCustomer(){
-//        return Response.ok(customerService.addCustomer()).build();
-//    }
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response addCustomer(CustomerRequest customerRequest){
+        return Response.ok(customerService.addCustomer(customerRequest)).build();
+    }
+
 }

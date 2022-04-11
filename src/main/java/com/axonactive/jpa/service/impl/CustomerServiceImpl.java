@@ -1,5 +1,6 @@
 package com.axonactive.jpa.service.impl;
 
+import com.axonactive.jpa.controller.request.CustomerRequest;
 import com.axonactive.jpa.entities.ContactInfo;
 import com.axonactive.jpa.entities.Customer;
 import com.axonactive.jpa.service.CustomerService;
@@ -20,6 +21,7 @@ public class CustomerServiceImpl implements CustomerService {
     EntityManager em;
     @Inject
     ContactInfo contactInfo;
+
     @Override
     public List<Customer> getAllCustomer() {
         return em.createQuery("from Customer",Customer.class).getResultList();
@@ -32,13 +34,14 @@ public class CustomerServiceImpl implements CustomerService {
         return typedQuery.getSingleResult();
     }
 
+
     @Override
-    public Customer addCustomer() {
+    public Customer addCustomer(CustomerRequest customerRequest) {
         Customer customer = new Customer();
-        customer.setName(customer.getName());
-        customer.setAge(customer.getAge());
-        customer.setNationality(customer.getNationality());
-        customer.setContactInfo(contactInfo);
+        customer.setName(customerRequest.getName());
+        customer.setContactInfo(customerRequest.getContactInfo());
+        customer.setAge(customerRequest.getAge());
+        customer.setNationality(customerRequest.getNationality());
         em.persist(customer);
         return customer;
     }
