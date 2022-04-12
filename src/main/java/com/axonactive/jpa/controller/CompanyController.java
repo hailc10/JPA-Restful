@@ -63,15 +63,21 @@ public class CompanyController {
     }
 
     @GET
+    @Path("empnotinprojectjpql")
+    public Response getEmpNotInProjectJPQL(){
+        return Response.ok(employeeService.getEmpNotInProjectJPQL()).build();
+    }
+
+    @GET
     @Path("empnotinproject")
     public Response getEmpNotInProject(){
         return Response.ok(employeeService.getEmpNotInProject()).build();
     }
 
     @GET
-    @Path("empinotherdepartmentproject")
+    @Path("empinmorethanoneproject")
     public Response getEmployeesWorkOnOtherDepartmentProject(){
-        return Response.ok(employeeService.getEmployeesWorkOnOtherDepartmentProject()).build();
+        return Response.ok(employeeService.getEmployeesWorkOnMoreThanProject()).build();
     }
 
     @GET
@@ -96,6 +102,12 @@ public class CompanyController {
     @Path("empdonthaveaddress")
     public Response getEmpDontHaveAddress(){
         return Response.ok(employeeService.getEmpDontHaveAddress()).build();
+    }
+
+    @GET
+    @Path("/emphasnohealthinsurance")
+    public Response getEmployeeHasNoHealthInsurance(){
+        return Response.ok(employeeService.getEmployeeHasNoHealthInsurance()).build();
     }
 
 }

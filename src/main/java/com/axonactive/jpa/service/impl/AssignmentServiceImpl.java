@@ -2,7 +2,9 @@ package com.axonactive.jpa.service.impl;
 
 
 import com.axonactive.jpa.controller.request.AssignmentRequest;
+import com.axonactive.jpa.controller.request.EmployeeRequest;
 import com.axonactive.jpa.entities.Assignment;
+import com.axonactive.jpa.entities.Employee;
 import com.axonactive.jpa.service.AssignmentService;
 import com.axonactive.jpa.service.EmployeeService;
 import com.axonactive.jpa.service.ProjectService;
@@ -71,6 +73,14 @@ public class AssignmentServiceImpl implements AssignmentService {
         assignment.setProject(projectService.getProjectByIdHepler(assignmentRequest.getProjectId()));
         return assignmentMapper.AssignmentToAssignmentDto(em.merge(assignment));
 
+    }
+
+    @Override
+    public List<AssignmentDTO> getAssignmentByEmployee(int employeeId) {
+        return assignmentMapper.AssignmentsToAssignmentDtos(
+                em.createQuery("SELECT a FROM Assignment a WHERE a.employee.id = : employeeId")
+                        .setParameter("employeeId", employeeId)
+                        .getResultList());
     }
 
     private Assignment getAssignmentByIdHelper(int assignmentId){

@@ -65,7 +65,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
 
-
     @Override
     public EmployeeDTO addEmployeeByDepartmentId(int departmentId, EmployeeOfDepartmentRequest employeeRequest) {
         Employee employee = employeeMapper.EmployeeRequestToEmployee(employeeRequest);
@@ -97,22 +96,22 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<EmployeeGroupByDepartmentDTO> employeeGroupByDepartmentDTOList = new ArrayList<>();
         List<Employee> employeeList = getEmployeeList();
         Map<Department, List<Employee>> employeeGroupByDepartment = employeeList.stream().collect(Collectors.groupingBy(Employee::getDepartment));
-        employeeGroupByDepartment.forEach((d,e)-> employeeGroupByDepartmentDTOList.add(
+        employeeGroupByDepartment.forEach((d, e) -> employeeGroupByDepartmentDTOList.add(
                 EmployeeGroupByDepartmentDTO.builder()
-                .departmentName(d.getName())
-                .startDate(d.getStartDate())
-                .numOfEmployee(e.size())
-                .numOfFemale(e.stream().filter(employee->employee.getGender()== Gender.FEMALE).count())
-                .numOfMale(e.stream().filter(employee->employee.getGender()== Gender.MALE).count())
-                .numOfU21(e.stream().filter(employee -> employee.getDateOfBirth().isAfter(LocalDate.now().minusYears(YEARS_TO_SUBTRACT))).count())
-                .build()));
+                        .departmentName(d.getName())
+                        .startDate(d.getStartDate())
+                        .numOfEmployee(e.size())
+                        .numOfFemale(e.stream().filter(employee -> employee.getGender() == Gender.FEMALE).count())
+                        .numOfMale(e.stream().filter(employee -> employee.getGender() == Gender.MALE).count())
+                        .numOfU21(e.stream().filter(employee -> employee.getDateOfBirth().isAfter(LocalDate.now().minusYears(YEARS_TO_SUBTRACT))).count())
+                        .build()));
         return employeeGroupByDepartmentDTOList;
     }
 
     @Override
     public List<EmployeeDTO> getEmployeeByBirthMonth(int month) {
         return employeeMapper.EmployeesToEmployeeDtos(getEmployeeList().stream()
-                .filter(employee -> employee.getDateOfBirth().getMonthValue()==month).collect(Collectors.toList()));
+                .filter(employee -> employee.getDateOfBirth().getMonthValue() == month).collect(Collectors.toList()));
     }
 
 
@@ -121,14 +120,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDTO getEmployeeById(int employeeId){
+    public EmployeeDTO getEmployeeById(int employeeId) {
         return employeeMapper.EmployeeToEmployeeDto(getEmployeeByIdFromDataBase(employeeId));
 
     }
 
     @Override
-    public Employee getEmployeeByIdFromDataBase(int employeeId){
-        return em.find(Employee.class,employeeId);
+    public Employee getEmployeeByIdFromDataBase(int employeeId) {
+        return em.find(Employee.class, employeeId);
     }
 
     @Override
@@ -147,13 +146,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void deleteEmployeeById(int employeeId) {
         Employee employee = getEmployeeByIdFromDataBase(employeeId);
-        if(Objects.nonNull(employee)) em.remove(employee);
+        if (Objects.nonNull(employee)) em.remove(employee);
     }
 
     @Override
     public EmployeeDTO updateEmployeeById(int employeeId, EmployeeRequest employeeRequest) {
         Employee employee = getEmployeeByIdFromDataBase(employeeId);
-        if(Objects.nonNull(employee)){
+        if (Objects.nonNull(employee)) {
             employee.setFirstName(employeeRequest.getFirstName());
             employee.setMiddleName(employeeRequest.getMiddleName());
             employee.setLastName(employeeRequest.getLastName());
@@ -163,38 +162,65 @@ public class EmployeeServiceImpl implements EmployeeService {
             employee.setDepartment(departmentService.getDepartmentById(employeeRequest.getDepartmentId()));
             return employeeMapper.EmployeeToEmployeeDto(em.merge(employee));
         }
-        throw new WebApplicationException(Response.status(BAD_REQUEST).entity("Không có Employee với Id: "+employeeId).build());
+        throw new WebApplicationException(Response.status(BAD_REQUEST).entity("Không có Employee với Id: " + employeeId).build());
+    }
+
+    //lấy danh sách các emp chưa có thông tin bảo hiểm - jpa query
+    @Override
+    public List<EmployeeDTO> getEmployeeHasNoHealthInsurance() {
+        return em.createQuery("SELECT e from Employee e WHERE e.id NOT IN (SELECT h.employee.id FROM HealthInsurance h )").getResultList();
     }
 
 
-    //lấy danh sách các emp chưa làm project nào
-    public List<EmployeeDTO> getEmpNotInProject(){
-        List<Assignment> assignments = em.createQuery("from Assignment",Assignment.class).getResultList();
+    //lấy danh sách các emp chưa làm project nào - java 8
+    public List<EmployeeDTO> getEmpNotInProject() {
+        List<Assignment> assignments = em.createQuery("from Assignment", Assignment.class).getResultList();
         List<Employee> employeeList = assignments
                 .stream()
                 .map(assignment -> assignment.getEmployee())
                 .distinct()
                 .collect(Collectors.toList());
-        return employeeMapper.EmployeesToEmployeeDtos(em.createQuery("from Employee",Employee.class).getResultList().stream().filter(employee -> !employeeList.contains(employee)).collect(Collectors.toList()));
+        return employeeMapper.EmployeesToEmployeeDtos(em.createQuery("from Employee", Employee.class).getResultList().stream().filter(employee -> !employeeList.contains(employee)).collect(Collectors.toList()));
     }
 
-//    public List<EmployeeDTO> getEmpNotInProject(){
-//
-//    }
+    //lấy danh sách các emp theo gender nhap vao
+    public List<EmployeeDTO> getEmpByGender(Gender gender) {
+        return employeeMapper.EmployeesToEmployeeDtos(
+                em.createQuery("SELECT e from Employee e where e.gender = :genderEmployee", Employee.class)
+                        .setParameter("genderEmployee", gender)
+                        .getResultList());
+
+    }
+
+    //lấy danh sách các emp theo dept_id
+    public List<EmployeeDTO> getEmpByDeptId(int departmentId) {
+        return employeeMapper.EmployeesToEmployeeDtos(em.createQuery("SELECT e from Employee e where e.id = :departmentId", Employee.class)
+                .setParameter("departmentId", departmentId)
+                .getResultList());
+    }
+
+
+    //lấy danh sách các emp chưa làm project nào - jpa query
+    public List<EmployeeDTO> getEmpNotInProjectJPQL() {
+        return employeeMapper.EmployeesToEmployeeDtos(
+                em.createQuery("from Employee e where e.id NOT IN (SELECT a.employee.id FROM Assignment a)").getResultList());
+    }
+
 
     //lấy danh sách các emp chưa có thông tin bảo hiểm
-    public List<EmployeeDTO> getEmpDontHaveHealthInsurance(){
-        List<HealthInsurance> healthInsurances = em.createQuery("from HealthInsurance",HealthInsurance.class).getResultList();
+    public List<EmployeeDTO> getEmpDontHaveHealthInsurance() {
+        List<HealthInsurance> healthInsurances = em.createQuery("from HealthInsurance", HealthInsurance.class).getResultList();
         List<Employee> employeeList = healthInsurances
                 .stream()
                 .map(healthInsurance -> healthInsurance.getEmployee())
                 .distinct()
                 .collect(Collectors.toList());
-        return employeeMapper.EmployeesToEmployeeDtos(em.createQuery("from Employee",Employee.class).getResultList().stream().filter(employee -> !employeeList.contains(employee)).collect(Collectors.toList()));
+        return employeeMapper.EmployeesToEmployeeDtos(em.createQuery("from Employee", Employee.class).getResultList().stream().filter(employee -> !employeeList.contains(employee)).collect(Collectors.toList()));
     }
 
+
     //lấy danh sách các emp chưa có thông tin hộ khẩu
-    public List<EmployeeDTO> getEmpDontHaveAddress(){
+    public List<EmployeeDTO> getEmpDontHaveAddress() {
         List<Address> addresses = em.createQuery("from Address", Address.class).getResultList();
         List<Employee> employeeList = addresses
                 .stream()
@@ -205,9 +231,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
 
-    //lấy danh sách emp làm việc trong project của dept khác
-    public List<EmployeeDTO> getEmployeesWorkOnOtherDepartmentProject(){
-        List<Assignment> assignments = em.createQuery("from Assignment",Assignment.class).getResultList();
+    //lấy danh sách emp làm việc trong nhiều hơn 1 project
+    public List<EmployeeDTO> getEmployeesWorkOnMoreThanProject() {
+        List<Assignment> assignments = em.createQuery("from Assignment", Assignment.class).getResultList();
         return employeeMapper.EmployeesToEmployeeDtos(assignments.stream()
                 .collect(Collectors.groupingBy(Assignment::getEmployee))
                 .entrySet()
@@ -222,4 +248,18 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .collect(Collectors.toList()));
     }
 
+    //lấy danh sách emp làm việc trong project của dept khác - jpa query
+    @Override
+    public List<EmployeeDTO> getEmployeeWorkOnOtherDepartmentProject() {
+        return employeeMapper.EmployeesToEmployeeDtos(
+                em.createQuery("SELECT em FROM Employee em WHERE em.department.id IN " +
+                        "(SELECT DISTINCT e.department.id " +
+                        "FROM Employee e, Assignment a, Project p " +
+                        "WHERE e.id = a.employee.id and a.project.id = p.id and " +
+                        "e.id = em.id and p.department.id != em.department.id)").getResultList());
+    }
+
 }
+
+
+

@@ -1,6 +1,7 @@
 package com.axonactive.jpa.controller;
 
 import com.axonactive.jpa.controller.request.EmployeeRequest;
+import com.axonactive.jpa.enumerate.Gender;
 import com.axonactive.jpa.service.EmployeeService;
 
 import javax.inject.Inject;
@@ -45,4 +46,23 @@ public class EmployeeController {
     public Response updateEmployeeById(@PathParam("employeeId") int employeeId, EmployeeRequest employeeRequest){
         return Response.ok(employeeService.updateEmployeeById(employeeId,employeeRequest)).build();
     }
+
+    @GET
+    @Path("gender")
+    public Response getEmpByGender(@QueryParam("gender") Gender gender){
+        return Response.ok(employeeService.getEmpByGender(gender)).build();
+    }
+
+    @GET
+    public Response getEmpByDeptId(@QueryParam("departmentId") int departmentId){
+        return Response.ok(employeeService.getEmpByDeptId(departmentId)).build();
+    }
+
+    @GET
+    @Path("empworkinotherdepartmentproject")
+    public Response getEmployeeWorkOnOtherDepartmentProject(){
+        return Response.ok(employeeService.getEmployeeWorkOnOtherDepartmentProject()).build();
+    }
+
+
 }

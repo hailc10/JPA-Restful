@@ -1,6 +1,8 @@
 package com.axonactive.jpa.service;
 
 import com.axonactive.jpa.controller.request.AssignmentRequest;
+import com.axonactive.jpa.controller.request.EmployeeRequest;
+import com.axonactive.jpa.entities.Employee;
 import com.axonactive.jpa.service.dto.AssignmentDTO;
 
 import java.util.List;
@@ -15,4 +17,6 @@ public interface AssignmentService {
     void deleteAssignment(int assignmentId);
 
     AssignmentDTO updateAssignment(int assignmentId, AssignmentRequest employeeRequest);
+
+    List<AssignmentDTO> getAssignmentByEmployee(int employeeId);
 }

@@ -92,7 +92,7 @@ class DepartmentServiceImplTest {
 
     @Test
     void getDepartmentById_GetIdHasNoDepartment_ShouldReturnNull() {
-        int departmentId = 20;
+        int departmentId = 1;
         when(entityManager.find(Department.class,departmentId)).thenReturn(null);
         Department actualDepartment = departmentService.getDepartmentById(departmentId);
         assertNull(actualDepartment);

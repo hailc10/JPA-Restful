@@ -2,6 +2,8 @@ package com.axonactive.jpa.controller;
 
 
 import com.axonactive.jpa.controller.request.AssignmentRequest;
+import com.axonactive.jpa.controller.request.EmployeeRequest;
+import com.axonactive.jpa.entities.Employee;
 import com.axonactive.jpa.service.AssignmentService;
 
 import javax.inject.Inject;
@@ -49,5 +51,11 @@ public class AssignmentController {
         return Response.ok(assignmentService.updateAssignment(assignmentId,assignmentRequest)).build();
     }
 
+    //lấy danh sách các Assignment cua 1 nhan vien nhap vao
+    @GET
+    @Path("/employee/{employeeId}")
+    public Response getAssignmentByEmployee(@PathParam("employeeId") int employeeId){
+        return Response.ok(assignmentService.getAssignmentByEmployee(employeeId)).build();
+    }
 }
 
