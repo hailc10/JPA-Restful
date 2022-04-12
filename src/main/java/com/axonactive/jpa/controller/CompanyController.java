@@ -101,6 +101,20 @@ public class CompanyController {
         return Response.ok(companyService.getProjectOfDepartment()).build();
     }
 
+    //lấy danh sách nhân viên làm việc trong project, tổng số lượng nhân viên, tổng số lượng tgian, tổng lương phải trả
+    @GET
+    @Path("employeeinproject")
+    public Response getEmployeeInProject(){
+        return Response.ok(companyService.getEmployeeInProject()).build();
+    }
+
+    // lấy danh sách relative theo Emp
+    @GET
+    @Path("relativeofemployee")
+    public Response getRelativeOfEmployee(){
+        return Response.ok(companyService.getRelativeOfEmployee()).build();
+    }
+
     @GET
     public Response getAllEmployeeGroupByDepartment(){
         return Response.ok(employeeService.getAllEmployeeGroupByDepartment()).build();
@@ -112,25 +126,14 @@ public class CompanyController {
         return Response.ok(employeeService.getEmployeeByBirthMonth(month)).build();
     }
 
-    @GET
-    @Path("relativeofemployee")
-    public Response getRelativeOfEmployee(){
-        return Response.ok(relativeService.getRelativeOfEmployee()).build();
-    }
-
+    //lấy 1 emergency relative of emp: Father > Mother > else
     @GET
     @Path("employee-emergency")
     public Response getEmployeeEmergencyRelative(){
-        return Response.ok(relativeService.getEmployeeEmergencyRelative()).build();
+        return Response.ok(companyService.getEmployeeEmergencyRelative()).build();
     }
 
 
-
-    @GET
-    @Path("employeeinproject")
-    public Response getEmployeeInProject(){
-        return Response.ok(projectService.getEmployeeInProject()).build();
-    }
 
 
 

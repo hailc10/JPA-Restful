@@ -88,8 +88,4 @@ public class HealthInsuranceServiceImpl implements HealthInsuranceService {
         throw new WebApplicationException(Response.status(BAD_REQUEST).entity("Không tồn tại Health insurance card với Id: "+healthInsuranceId).build());
     }
 
-
-
-
-
 }

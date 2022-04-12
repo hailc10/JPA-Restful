@@ -1,6 +1,7 @@
 package com.axonactive.jpa.service.impl;
 
 import com.axonactive.jpa.entities.*;
+import com.axonactive.jpa.enumerate.Relationship;
 import com.axonactive.jpa.service.CompanyService;
 import com.axonactive.jpa.service.EmployeeService;
 import com.axonactive.jpa.service.dto.*;
@@ -11,7 +12,9 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequestScoped
@@ -36,6 +39,9 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Inject
     ProjectMapper projectMapper;
+
+    @Inject
+    RelativeMapper relativeMapper;
 
     //lấy danh sách address theo emp
     public List<EmployeeAddressDTO> getAddressOfEmployees(){
@@ -150,6 +156,86 @@ public class CompanyServiceImpl implements CompanyService {
                     DepartmentDTO departmentDTO = departmentMapper.DepartmentToDepartmentDTO(e.getKey());
                     List<ProjectDTO> projectDTOS = projectMapper.ProjectsToProjectDtos(e.getValue());
                     return new DepartmentProjectDTO(departmentDTO,projectDTOS);
+                }).collect(Collectors.toList());
+    }
+
+    //lấy danh sách nhân viên làm việc trong project, tổng số lượng nhân viên, tổng số lượng tgian, tổng lương phải trả
+    public List<ProjectEmployeeDTO> getEmployeeInProject(){
+        List<Assignment> assignments = em.createQuery("from Assignment", Assignment.class).getResultList();
+        return assignments.stream()
+                .collect(Collectors.groupingBy(Assignment::getProject))
+                .entrySet()
+                .stream()
+                .filter(e->e.getKey().getArea().equals("Vietnam"))
+                .map((e)->{
+                    Project project = e.getKey();
+                    List<Assignment> assignmentList = e.getValue();
+                    List<EmployeeDTO> employeeDTOS = employeeMapper.EmployeesToEmployeeDtos(assignmentList
+                            .stream()
+                            .map(Assignment::getEmployee)
+                            .distinct()
+                            .collect(Collectors.toList()));
+                    Double totalSalary = assignmentList.stream().reduce(0.0, (acc, cur) ->
+                                    acc + (cur.getEmployee().getSalary()/160) * cur.getNumofhour()
+                            ,Double::sum);
+                    int totalNumberOfHour = assignmentList.stream().mapToInt(Assignment::getNumofhour).sum();
+                    return new ProjectEmployeeDTO(project.getName(),project.getArea(),employeeDTOS,employeeDTOS.size(),totalNumberOfHour,totalSalary);
+                })
+                .collect(Collectors.toList());
+    }
+
+
+    // lấy danh sách relative theo Emp
+    public List<EmployeeRelativeDTO> getRelativeOfEmployee(){
+        return getAllRelatives().stream()
+                .collect(Collectors.groupingBy(Relative::getEmployee))
+                .entrySet()
+                .stream()
+                .map(employeeRelativesEntry -> {
+                    EmployeeDTO employeeDTO = employeeMapper.EmployeeToEmployeeDto(employeeRelativesEntry.getKey());
+                    List<RelativeDTO> relativeDTOS = relativeMapper.RelativesToRelativeDtos(employeeRelativesEntry.getValue());
+                    return new EmployeeRelativeDTO(employeeDTO, relativeDTOS);
+                }).collect(Collectors.toList());
+    }
+
+    private List<Relative> getAllRelatives() {
+        return em.createQuery("from Relative", Relative.class).getResultList();
+    }
+
+    //lấy relative của emp để liên lạc theo độ ưu tiên Father > Mother > Else
+    //employeeDTO +  relative where -> FATHER -> MOTHER -> ANYBODY ELSE
+    public Optional<Relative> getEmergencyRelative(List<Relative> relativeList){
+        Optional<Relative> emergencyRelative = getRelative(relativeList, Relationship.FATHER);
+        if (emergencyRelative.isEmpty()){
+            emergencyRelative = getRelative(relativeList, Relationship.MOTHER);
+        }
+        if (emergencyRelative.isEmpty()){
+            emergencyRelative=relativeList.stream().findAny();
+        }
+        return emergencyRelative;
+    }
+
+    private Optional<Relative> getRelative(List<Relative> relativeList, Relationship relationship) {
+        return relativeList.stream().filter(r ->
+                r.getRelationship().equals(relationship)
+        ).findAny();
+    }
+
+
+    //lấy danh sách Relative theo Employee
+    public List<EmployeeRelativeDTO> getEmployeeEmergencyRelative(){
+        return getAllRelatives().stream()
+                .collect(Collectors.groupingBy(Relative::getEmployee))
+                .entrySet()
+                .stream()
+                .map(employeeRelativesEntry -> {
+                    EmployeeDTO employeeDTO = employeeMapper.EmployeeToEmployeeDto(employeeRelativesEntry.getKey());
+                    List<RelativeDTO> relativeDTOS = new ArrayList<>();
+                    Optional<Relative> emergencyRelative = getEmergencyRelative(employeeRelativesEntry.getValue());
+                    if (!emergencyRelative.isEmpty()){
+                        relativeDTOS.add(relativeMapper.RelativeToRelativeDto(emergencyRelative.get()));
+                    }
+                    return new EmployeeRelativeDTO(employeeDTO, relativeDTOS);
                 }).collect(Collectors.toList());
     }
 }

@@ -1,9 +1,6 @@
 package com.axonactive.jpa.service;
 
-import com.axonactive.jpa.service.dto.DepartmentProjectDTO;
-import com.axonactive.jpa.service.dto.EmployeeAddressDTO;
-import com.axonactive.jpa.service.dto.EmployeeDTO;
-import com.axonactive.jpa.service.dto.EmployeeHealthInsuranceDTO;
+import com.axonactive.jpa.service.dto.*;
 
 import java.util.List;
 
@@ -18,4 +15,7 @@ public interface CompanyService {
     List<EmployeeDTO> getEmployeeWorkOnOtherDepartmentProject();
     List<EmployeeHealthInsuranceDTO> getHealthInsuranceOfEmployee();
     List<DepartmentProjectDTO> getProjectOfDepartment();
+    List<ProjectEmployeeDTO> getEmployeeInProject();
+    List<EmployeeRelativeDTO> getRelativeOfEmployee();
+    List<EmployeeRelativeDTO> getEmployeeEmergencyRelative();
 }

@@ -98,32 +98,4 @@ public class ProjectServiceImpl implements ProjectService {
         return ProjectMapper.INSTANCE.ProjectToProjectDto(project);
     }
 
-
-
-
-    //lấy danh sách nhân viên làm việc trong project, tổng số lượng nhân viên, tổng số lượng tgian, tổng lương phải trả
-    public List<ProjectEmployeeDTO> getEmployeeInProject(){
-        List<Assignment> assignments = em.createQuery("from Assignment", Assignment.class).getResultList();
-        return assignments.stream()
-                .collect(Collectors.groupingBy(Assignment::getProject))
-                .entrySet()
-                .stream()
-                .filter(e->e.getKey().getArea().equals("Vietnam"))
-                .map((e)->{
-                    Project project = e.getKey();
-                    List<Assignment> assignmentList = e.getValue();
-                    List<EmployeeDTO> employeeDTOS = employeeMapper.EmployeesToEmployeeDtos(assignmentList
-                            .stream()
-                            .map(Assignment::getEmployee)
-                            .distinct()
-                            .collect(Collectors.toList()));
-                    Double totalSalary = assignmentList.stream().reduce(0.0, (acc, cur) ->
-                            acc + (cur.getEmployee().getSalary()/160) * cur.getNumofhour()
-                    ,Double::sum);
-                    int totalNumberOfHour = assignmentList.stream().mapToInt(Assignment::getNumofhour).sum();
-                    return new ProjectEmployeeDTO(project.getName(),project.getArea(),employeeDTOS,employeeDTOS.size(),totalNumberOfHour,totalSalary);
-                })
-                .collect(Collectors.toList());
-    }
-
 }
