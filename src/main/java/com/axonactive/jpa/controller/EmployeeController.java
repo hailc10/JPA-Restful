@@ -58,11 +58,5 @@ public class EmployeeController {
         return Response.ok(employeeService.getEmpByDeptId(departmentId)).build();
     }
 
-    @GET
-    @Path("empworkinotherdepartmentproject")
-    public Response getEmployeeWorkOnOtherDepartmentProject(){
-        return Response.ok(employeeService.getEmployeeWorkOnOtherDepartmentProject()).build();
-    }
-
 
 }

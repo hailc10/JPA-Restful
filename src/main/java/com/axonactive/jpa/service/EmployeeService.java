@@ -29,8 +29,5 @@ public interface EmployeeService {
     EmployeeDTO addEmployee(EmployeeRequest employeeRequest);
     EmployeeDTO updateEmployeeById(int employeeId, EmployeeRequest employeeRequest);
 
-    List<EmployeeDTO> getEmployeeHasNoHealthInsurance();
-
-    List<EmployeeDTO> getEmployeeWorkOnOtherDepartmentProject();
 
 }

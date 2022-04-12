@@ -165,23 +165,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         throw new WebApplicationException(Response.status(BAD_REQUEST).entity("Không có Employee với Id: " + employeeId).build());
     }
 
-    //lấy danh sách các emp chưa có thông tin bảo hiểm - jpa query
-    @Override
-    public List<EmployeeDTO> getEmployeeHasNoHealthInsurance() {
-        return em.createQuery("SELECT e from Employee e WHERE e.id NOT IN (SELECT h.employee.id FROM HealthInsurance h )").getResultList();
-    }
-
-
-    //lấy danh sách các emp chưa làm project nào - java 8
-    public List<EmployeeDTO> getEmpNotInProject() {
-        List<Assignment> assignments = em.createQuery("from Assignment", Assignment.class).getResultList();
-        List<Employee> employeeList = assignments
-                .stream()
-                .map(assignment -> assignment.getEmployee())
-                .distinct()
-                .collect(Collectors.toList());
-        return employeeMapper.EmployeesToEmployeeDtos(em.createQuery("from Employee", Employee.class).getResultList().stream().filter(employee -> !employeeList.contains(employee)).collect(Collectors.toList()));
-    }
 
     //lấy danh sách các emp theo gender nhap vao
     public List<EmployeeDTO> getEmpByGender(Gender gender) {
@@ -189,7 +172,6 @@ public class EmployeeServiceImpl implements EmployeeService {
                 em.createQuery("SELECT e from Employee e where e.gender = :genderEmployee", Employee.class)
                         .setParameter("genderEmployee", gender)
                         .getResultList());
-
     }
 
     //lấy danh sách các emp theo dept_id
@@ -199,65 +181,6 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .getResultList());
     }
 
-
-    //lấy danh sách các emp chưa làm project nào - jpa query
-    public List<EmployeeDTO> getEmpNotInProjectJPQL() {
-        return employeeMapper.EmployeesToEmployeeDtos(
-                em.createQuery("from Employee e where e.id NOT IN (SELECT a.employee.id FROM Assignment a)").getResultList());
-    }
-
-
-    //lấy danh sách các emp chưa có thông tin bảo hiểm
-    public List<EmployeeDTO> getEmpDontHaveHealthInsurance() {
-        List<HealthInsurance> healthInsurances = em.createQuery("from HealthInsurance", HealthInsurance.class).getResultList();
-        List<Employee> employeeList = healthInsurances
-                .stream()
-                .map(healthInsurance -> healthInsurance.getEmployee())
-                .distinct()
-                .collect(Collectors.toList());
-        return employeeMapper.EmployeesToEmployeeDtos(em.createQuery("from Employee", Employee.class).getResultList().stream().filter(employee -> !employeeList.contains(employee)).collect(Collectors.toList()));
-    }
-
-
-    //lấy danh sách các emp chưa có thông tin hộ khẩu
-    public List<EmployeeDTO> getEmpDontHaveAddress() {
-        List<Address> addresses = em.createQuery("from Address", Address.class).getResultList();
-        List<Employee> employeeList = addresses
-                .stream()
-                .map(address -> address.getEmployee())
-                .distinct()
-                .collect(Collectors.toList());
-        return employeeMapper.EmployeesToEmployeeDtos(em.createQuery("from Employee", Employee.class).getResultList().stream().filter(employee -> !employeeList.contains(employee)).collect(Collectors.toList()));
-    }
-
-
-    //lấy danh sách emp làm việc trong nhiều hơn 1 project
-    public List<EmployeeDTO> getEmployeesWorkOnMoreThanProject() {
-        List<Assignment> assignments = em.createQuery("from Assignment", Assignment.class).getResultList();
-        return employeeMapper.EmployeesToEmployeeDtos(assignments.stream()
-                .collect(Collectors.groupingBy(Assignment::getEmployee))
-                .entrySet()
-                .stream()
-                .filter(employeeListEntry ->
-                        employeeListEntry.getValue()
-                                .stream()
-                                .map(assignment -> assignment.getProject().getDepartment().getId())
-                                .distinct().count() > 1
-                )
-                .map(employeeListEntry -> employeeListEntry.getKey())
-                .collect(Collectors.toList()));
-    }
-
-    //lấy danh sách emp làm việc trong project của dept khác - jpa query
-    @Override
-    public List<EmployeeDTO> getEmployeeWorkOnOtherDepartmentProject() {
-        return employeeMapper.EmployeesToEmployeeDtos(
-                em.createQuery("SELECT em FROM Employee em WHERE em.department.id IN " +
-                        "(SELECT DISTINCT e.department.id " +
-                        "FROM Employee e, Assignment a, Project p " +
-                        "WHERE e.id = a.employee.id and a.project.id = p.id and " +
-                        "e.id = em.id and p.department.id != em.department.id)").getResultList());
-    }
 
 }
 

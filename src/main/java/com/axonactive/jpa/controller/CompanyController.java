@@ -1,5 +1,6 @@
 package com.axonactive.jpa.controller;
 
+import com.axonactive.jpa.service.CompanyService;
 import com.axonactive.jpa.service.EmployeeService;
 import com.axonactive.jpa.service.impl.*;
 
@@ -27,6 +28,79 @@ public class CompanyController {
     @Inject
     AddressServiceImpl addressService;
 
+    @Inject
+    CompanyService companyService;
+
+    //lấy danh sách address theo emp
+    @GET
+    @Path("addressofemployees")
+    public Response getAddressOfEmployees(){
+        return Response.ok(companyService.getAddressOfEmployees()).build();
+    }
+
+    //lấy danh sách các emp chưa làm project nào - java 8
+    @GET
+    @Path("empnotinproject")
+    public Response getEmpNotInProject(){
+        return Response.ok(companyService.getEmpNotInProject()).build();
+    }
+
+    //lấy danh sách các emp chưa làm project nào - jqpl
+    @GET
+    @Path("empnotinprojectjpql")
+    public Response getEmpNotInProjectJPQL(){
+        return Response.ok(companyService.getEmpNotInProjectJPQL()).build();
+    }
+
+    //lấy danh sách các emp chưa có thông tin bảo hiểm
+    @GET
+    @Path("empdonthavehealthinsurance")
+    public Response getEmpDontHaveHealthInsurance(){
+        return Response.ok(companyService.getEmpDontHaveHealthInsurance()).build();
+    }
+
+    //lấy danh sách các emp chưa có thông tin bảo hiểm - jpa query
+    @GET
+    @Path("/emphasnohealthinsurance")
+    public Response getEmployeeHasNoHealthInsurance(){
+        return Response.ok(companyService.getEmployeeHasNoHealthInsurance()).build();
+    }
+
+    //lấy danh sách các emp chưa có thông tin hộ khẩu
+    @GET
+    @Path("empdonthaveaddress")
+    public Response getEmpDontHaveAddress(){
+        return Response.ok(companyService.getEmpDontHaveAddress()).build();
+    }
+
+    //lấy danh sách emp làm việc trong nhiều hơn 1 project
+    @GET
+    @Path("empinmorethanoneproject")
+    public Response getEmployeesWorkOnMoreThanOneProject(){
+        return Response.ok(companyService.getEmployeesWorkOnMoreThanProject()).build();
+    }
+
+    //lấy danh sách emp làm việc trong project của dept khác - jpa query
+    @GET
+    @Path("empworkinotherdepartmentproject")
+    public Response getEmployeeWorkOnOtherDepartmentProject(){
+        return Response.ok(companyService.getEmployeeWorkOnOtherDepartmentProject()).build();
+    }
+
+    //lấy danh sách health insurance theo emp
+    @GET
+    @Path("healthinsuranceofemployees")
+    public Response getHealthInsuranceOfEmployee(){
+        return Response.ok(companyService.getHealthInsuranceOfEmployee()).build();
+    }
+
+    //lấy danh sách các project theo department
+    @GET
+    @Path("projectofdepartment")
+    public Response getProjectOfDepartment(){
+        return Response.ok(companyService.getProjectOfDepartment()).build();
+    }
+
     @GET
     public Response getAllEmployeeGroupByDepartment(){
         return Response.ok(employeeService.getAllEmployeeGroupByDepartment()).build();
@@ -50,11 +124,7 @@ public class CompanyController {
         return Response.ok(relativeService.getEmployeeEmergencyRelative()).build();
     }
 
-    @GET
-    @Path("projectofdepartment")
-    public Response getProjectOfDepartment(){
-        return Response.ok(projectService.getProjectOfDepartment()).build();
-    }
+
 
     @GET
     @Path("employeeinproject")
@@ -62,52 +132,6 @@ public class CompanyController {
         return Response.ok(projectService.getEmployeeInProject()).build();
     }
 
-    @GET
-    @Path("empnotinprojectjpql")
-    public Response getEmpNotInProjectJPQL(){
-        return Response.ok(employeeService.getEmpNotInProjectJPQL()).build();
-    }
 
-    @GET
-    @Path("empnotinproject")
-    public Response getEmpNotInProject(){
-        return Response.ok(employeeService.getEmpNotInProject()).build();
-    }
-
-    @GET
-    @Path("empinmorethanoneproject")
-    public Response getEmployeesWorkOnOtherDepartmentProject(){
-        return Response.ok(employeeService.getEmployeesWorkOnMoreThanProject()).build();
-    }
-
-    @GET
-    @Path("healthinsuranceofemployees")
-    public Response getHealthInsuranceOfEmployee(){
-        return Response.ok(healthInsuranceService.getHealthInsuranceOfEmployee()).build();
-    }
-
-    @GET
-    @Path("addressofemployees")
-    public Response getAddressOfEmployees(){
-        return Response.ok(addressService.getAddressOfEmployees()).build();
-    }
-
-    @GET
-    @Path("empdonthavehealthinsurance")
-    public Response getEmpDontHaveHealthInsurance(){
-        return Response.ok(employeeService.getEmpDontHaveHealthInsurance()).build();
-    }
-
-    @GET
-    @Path("empdonthaveaddress")
-    public Response getEmpDontHaveAddress(){
-        return Response.ok(employeeService.getEmpDontHaveAddress()).build();
-    }
-
-    @GET
-    @Path("/emphasnohealthinsurance")
-    public Response getEmployeeHasNoHealthInsurance(){
-        return Response.ok(employeeService.getEmployeeHasNoHealthInsurance()).build();
-    }
 
 }

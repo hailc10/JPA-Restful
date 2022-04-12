@@ -98,19 +98,7 @@ public class ProjectServiceImpl implements ProjectService {
         return ProjectMapper.INSTANCE.ProjectToProjectDto(project);
     }
 
-    //lấy danh sách các project theo department
-    public List<DepartmentProjectDTO> getProjectOfDepartment(){
-        return em.createQuery("from Project", Project.class).getResultList()
-                .stream()
-                .collect(Collectors.groupingBy(Project::getDepartment))
-                .entrySet()
-                .stream()
-                .map(e->{
-                    DepartmentDTO departmentDTO = departmentMapper.DepartmentToDepartmentDTO(e.getKey());
-                    List<ProjectDTO> projectDTOS = projectMapper.ProjectsToProjectDtos(e.getValue());
-                    return new DepartmentProjectDTO(departmentDTO,projectDTOS);
-                }).collect(Collectors.toList());
-    }
+
 
 
     //lấy danh sách nhân viên làm việc trong project, tổng số lượng nhân viên, tổng số lượng tgian, tổng lương phải trả

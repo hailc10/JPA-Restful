@@ -88,20 +88,7 @@ public class HealthInsuranceServiceImpl implements HealthInsuranceService {
         throw new WebApplicationException(Response.status(BAD_REQUEST).entity("Không tồn tại Health insurance card với Id: "+healthInsuranceId).build());
     }
 
-    //lấy danh sách health insurance theo emp
-    public List<EmployeeHealthInsuranceDTO> getHealthInsuranceOfEmployee(){
-        List<HealthInsurance> healthInsurances = em.createQuery("from HealthInsurance", HealthInsurance.class).getResultList();
-        return healthInsurances.stream()
-                .collect(Collectors.groupingBy(HealthInsurance::getEmployee))
-                .entrySet()
-                .stream()
-                .map(e->{
-                    EmployeeDTO employeeDTO = employeeMapper.EmployeeToEmployeeDto(e.getKey());
-                    List<HealthInsuranceDTO> healthInsuranceDTOS = healthInsuranceMapper.HealthInsurancesToHealthInsuranceDTOs(e.getValue());
-                    return new EmployeeHealthInsuranceDTO(employeeDTO, healthInsuranceDTOS);
-                })
-                .collect(Collectors.toList());
-    }
+
 
 
 
