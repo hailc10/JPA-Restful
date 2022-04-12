@@ -115,6 +115,13 @@ public class CompanyController {
         return Response.ok(companyService.getRelativeOfEmployee()).build();
     }
 
+    //lấy 1 emergency relative of emp: Father > Mother > else
+    @GET
+    @Path("employee-emergency")
+    public Response getEmployeeEmergencyRelative(){
+        return Response.ok(companyService.getEmployeeEmergencyRelative()).build();
+    }
+
     @GET
     public Response getAllEmployeeGroupByDepartment(){
         return Response.ok(employeeService.getAllEmployeeGroupByDepartment()).build();
@@ -126,12 +133,7 @@ public class CompanyController {
         return Response.ok(employeeService.getEmployeeByBirthMonth(month)).build();
     }
 
-    //lấy 1 emergency relative of emp: Father > Mother > else
-    @GET
-    @Path("employee-emergency")
-    public Response getEmployeeEmergencyRelative(){
-        return Response.ok(companyService.getEmployeeEmergencyRelative()).build();
-    }
+
 
 
 
