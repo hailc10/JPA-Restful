@@ -2,14 +2,14 @@ package com.axonactive.jpa.entities;
 
 import com.axonactive.jpa.enumerate.Nationality;
 import com.axonactive.jpa.enumerate.NationalityAttributeConverter;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @NamedQuery(name = Customer.GET_ALL, query = "from Customer c where c.id = :customerId")

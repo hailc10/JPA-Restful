@@ -60,20 +60,39 @@ class DepartmentServiceImplTest {
         assertThat(expectedDepartmentList,containsInAnyOrder(actualDepartmentList.toArray()));
     }
 
+//    @Test
+//    void getDepartmentById_GetSpecificId_ShouldReturnDepartment() {
+//        int departmentId = 2;
+//        Department expectedDepartment = expectedDepartmentList.stream()
+//                .filter(d->d.getId()==departmentId)
+//                .findFirst().get();
+//        when(entityManager.find(Department.class,departmentId)).thenReturn(expectedDepartment);
+//        Department actualDepartment = departmentService.getDepartmentById(departmentId);
+//        assertEquals(expectedDepartment,actualDepartment);
+//    }
+
     @Test
-    void getDepartmentById_GetSpecificId_ShouldReturnDepartment() {
+    void getDepartmentById_ShouldReturnDepartment() {
         int departmentId = 2;
         Department expectedDepartment = expectedDepartmentList.stream()
-                .filter(d->d.getId()==departmentId)
+                .filter(department -> department.getId()==departmentId)
                 .findFirst().get();
         when(entityManager.find(Department.class,departmentId)).thenReturn(expectedDepartment);
         Department actualDepartment = departmentService.getDepartmentById(departmentId);
         assertEquals(expectedDepartment,actualDepartment);
     }
 
+//    @Test
+//    void getDepartmentById_GetIdNotHasDepartment_ShouldReturnNull() {
+//        int departmentId = 6;
+//        when(entityManager.find(Department.class,departmentId)).thenReturn(null);
+//        Department actualDepartment = departmentService.getDepartmentById(departmentId);
+//        assertNull(actualDepartment);
+//    }
+
     @Test
-    void getDepartmentById_GetIdNotHasDepartment_ShouldReturnNull() {
-        int departmentId = 6;
+    void getDepartmentById_GetIdHasNoDepartment_ShouldReturnNull() {
+        int departmentId = 20;
         when(entityManager.find(Department.class,departmentId)).thenReturn(null);
         Department actualDepartment = departmentService.getDepartmentById(departmentId);
         assertNull(actualDepartment);

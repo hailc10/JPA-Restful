@@ -2,15 +2,14 @@ package com.axonactive.jpa.service.impl;
 
 import com.axonactive.jpa.controller.request.EmployeeOfDepartmentRequest;
 import com.axonactive.jpa.controller.request.EmployeeRequest;
-import com.axonactive.jpa.entities.Assignment;
-import com.axonactive.jpa.entities.Department;
-import com.axonactive.jpa.entities.Employee;
+import com.axonactive.jpa.entities.*;
 import com.axonactive.jpa.enumerate.Gender;
 import com.axonactive.jpa.service.AssignmentService;
 import com.axonactive.jpa.service.DepartmentService;
 import com.axonactive.jpa.service.EmployeeService;
 import com.axonactive.jpa.service.dto.*;
 import com.axonactive.jpa.service.mapper.EmployeeMapper;
+import org.checkerframework.checker.index.qual.PolyUpperBound;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -182,6 +181,29 @@ public class EmployeeServiceImpl implements EmployeeService {
 //    public List<EmployeeDTO> getEmpNotInProject(){
 //
 //    }
+
+    //lấy danh sách các emp chưa có thông tin bảo hiểm
+    public List<EmployeeDTO> getEmpDontHaveHealthInsurance(){
+        List<HealthInsurance> healthInsurances = em.createQuery("from HealthInsurance",HealthInsurance.class).getResultList();
+        List<Employee> employeeList = healthInsurances
+                .stream()
+                .map(healthInsurance -> healthInsurance.getEmployee())
+                .distinct()
+                .collect(Collectors.toList());
+        return employeeMapper.EmployeesToEmployeeDtos(em.createQuery("from Employee",Employee.class).getResultList().stream().filter(employee -> !employeeList.contains(employee)).collect(Collectors.toList()));
+    }
+
+    //lấy danh sách các emp chưa có thông tin hộ khẩu
+    public List<EmployeeDTO> getEmpDontHaveAddress(){
+        List<Address> addresses = em.createQuery("from Address", Address.class).getResultList();
+        List<Employee> employeeList = addresses
+                .stream()
+                .map(address -> address.getEmployee())
+                .distinct()
+                .collect(Collectors.toList());
+        return employeeMapper.EmployeesToEmployeeDtos(em.createQuery("from Employee", Employee.class).getResultList().stream().filter(employee -> !employeeList.contains(employee)).collect(Collectors.toList()));
+    }
+
 
     //lấy danh sách emp làm việc trong project của dept khác
     public List<EmployeeDTO> getEmployeesWorkOnOtherDepartmentProject(){

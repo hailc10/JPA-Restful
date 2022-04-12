@@ -86,5 +86,16 @@ public class CompanyController {
         return Response.ok(addressService.getAddressOfEmployees()).build();
     }
 
+    @GET
+    @Path("empdonthavehealthinsurance")
+    public Response getEmpDontHaveHealthInsurance(){
+        return Response.ok(employeeService.getEmpDontHaveHealthInsurance()).build();
+    }
+
+    @GET
+    @Path("empdonthaveaddress")
+    public Response getEmpDontHaveAddress(){
+        return Response.ok(employeeService.getEmpDontHaveAddress()).build();
+    }
 
 }
