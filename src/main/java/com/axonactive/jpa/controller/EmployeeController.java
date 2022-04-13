@@ -38,7 +38,6 @@ public class EmployeeController {
     public Response deleteEmployeeById(@PathParam("employeeId") int employeeId){
         employeeService.deleteEmployeeById(employeeId);
         return Response.ok().build();
-
     }
 
     @PUT
@@ -48,12 +47,13 @@ public class EmployeeController {
     }
 
     @GET
-    @Path("gender")
+    @Path("/gender")
     public Response getEmpByGender(@QueryParam("gender") Gender gender){
         return Response.ok(employeeService.getEmpByGender(gender)).build();
     }
 
     @GET
+    @Path("/empbydept")
     public Response getEmpByDeptId(@QueryParam("departmentId") int departmentId){
         return Response.ok(employeeService.getEmpByDeptId(departmentId)).build();
     }

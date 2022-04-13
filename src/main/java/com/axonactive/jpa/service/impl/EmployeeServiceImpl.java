@@ -176,7 +176,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     //lấy danh sách các emp theo dept_id
     public List<EmployeeDTO> getEmpByDeptId(int departmentId) {
-        return employeeMapper.EmployeesToEmployeeDtos(em.createQuery("SELECT e from Employee e where e.id = :departmentId", Employee.class)
+        return employeeMapper.EmployeesToEmployeeDtos(em.createQuery("SELECT e from Employee e where e.department.id = :departmentId", Employee.class)
                 .setParameter("departmentId", departmentId)
                 .getResultList());
     }

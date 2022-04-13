@@ -2,7 +2,9 @@ package com.axonactive.jpa.entities;
 
 import com.axonactive.jpa.enumerate.Gender;
 import com.axonactive.jpa.enumerate.Relationship;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -11,6 +13,8 @@ import javax.persistence.*;
 @Table(name = "relatives")
 @Setter
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @NamedQuery(name = Relative.GET_ALL_RELATIVE_BY_EMPLOYEE_ID, query = "from Relative r where r.employee.id =:employeeId")
 @NamedQuery(name = Relative.GET_RELATIVE_BY_EMPLOYEE_ID_AND_RELATIVE_ID, query = "from Relative r where r.employee.id =:employeeId and r.id =:relativeId")
 public class Relative {

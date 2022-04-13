@@ -8,7 +8,8 @@ import org.mapstruct.Mapper;
 import java.util.List;
 
 @Mapper
-public interface RelativeMapper {
+public interface
+RelativeMapper {
 
     RelativeDTO RelativeToRelativeDto(Relative relative);
 
@@ -16,5 +17,5 @@ public interface RelativeMapper {
 
     Relative RelativeRequestToRelative(RelativeRequest relativeRequest);
 
-
+    Relative RelativeDTOToRelative(RelativeDTO relativeDTO);
 }
